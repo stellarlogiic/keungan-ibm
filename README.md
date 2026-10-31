@@ -40,12 +40,3 @@ Tunggu beberapa menit, aplikasi bisa dibuka di: https://stellarlogiic.github.io/
 Semua data tersimpan di browser masing-masing pengguna (tidak dikirim ke server).
 Menghapus data situs/cache browser akan menghapus transaksi. Gunakan tombol Reset ke data dummy untuk mengembalikan data contoh.
 Data awal hanyalah contoh dan bukan data keuangan sebenarnya.
-📄 Lisensi
-
-Bebas digunakan untuk belajar dan pengembangan pribadi.
-
-Readme
-MD
-Uploads
-1793419575521_image.png, 1793419471921_image.png
-+6
