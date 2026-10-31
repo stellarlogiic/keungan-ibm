@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CatatUang – Pencatat Keuangan Pribadi</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="navbar-brand">
+      <span class="logo-icon">💰</span>
+      <span class="logo-text">CatatUang</span>
+    </div>
+    <div class="navbar-actions">
+      <!-- Tombol reset ke data dummy -->
+      <button id="btn-reset" class="btn btn-outline btn-sm" title="Reset ke data dummy">
+        🔄 Reset Data
+      </button>
+      <!-- Toggle dark/light mode -->
+      <button id="btn-theme" class="btn btn-icon" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ===== PILIHAN BULAN AKTIF ===== -->
+    <section class="month-selector-bar">
+      <label for="active-month">Periode:</label>
+      <input type="month" id="active-month" />
+    </section>
+
+    <!-- ===== DASHBOARD CARDS ===== -->
+    <section class="dashboard" aria-label="Ringkasan keuangan">
+      <div class="card card-income">
+        <p class="card-label">Pemasukan</p>
+        <p class="card-value" id="total-income">Rp 0</p>
+      </div>
+      <div class="card card-expense">
+        <p class="card-label">Pengeluaran</p>
+        <p class="card-value" id="total-expense">Rp 0</p>
+      </div>
+      <div class="card card-balance">
+        <p class="card-label">Saldo</p>
+        <p class="card-value" id="total-balance">Rp 0</p>
+      </div>
+    </section>
+
+    <!-- ===== GRAFIK & TOMBOL TAMBAH ===== -->
+    <section class="chart-add-row">
+      <!-- Doughnut chart pengeluaran per kategori -->
+      <div class="chart-wrapper card">
+        <h2 class="section-title">Pengeluaran per Kategori</h2>
+        <div class="chart-container">
+          <canvas id="expense-chart"></canvas>
+        </div>
+        <p id="chart-empty" class="chart-empty-msg hidden">Belum ada pengeluaran bulan ini.</p>
+      </div>
+
+      <!-- Panel aksi: tombol tambah + ringkasan kategori teks -->
+      <div class="action-panel">
+        <button id="btn-add" class="btn btn-primary btn-block">
+          ＋ Tambah Transaksi
+        </button>
+        <div class="category-legend card" id="category-legend">
+          <!-- Diisi oleh JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FILTER & PENCARIAN ===== -->
+    <section class="filter-bar card">
+      <div class="filter-group">
+        <label for="filter-type">Tipe</label>
+        <select id="filter-type">
+          <option value="all">Semua</option>
+          <option value="income">Pemasukan</option>
+          <option value="expense">Pengeluaran</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-category">Kategori</label>
+        <select id="filter-category">
+          <option value="all">Semua</option>
+          <!-- Opsi diisi dinamis oleh JS -->
+        </select>
+      </div>
+      <div class="filter-group filter-search">
+        <label for="filter-search">Cari Catatan</label>
+        <input type="text" id="filter-search" placeholder="Ketik kata kunci…" />
+      </div>
+      <button id="btn-clear-filter" class="btn btn-outline btn-sm">✕ Reset Filter</button>
+    </section>
+
+    <!-- ===== TABEL TRANSAKSI ===== -->
+    <section class="transactions-section">
+      <h2 class="section-title">Daftar Transaksi</h2>
+      <div class="table-wrapper">
+        <table class="transactions-table" id="transactions-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Kategori</th>
+              <th>Catatan</th>
+              <th class="text-right">Jumlah</th>
+              <th class="text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-body">
+            <!-- Baris diisi oleh JS -->
+          </tbody>
+        </table>
+        <p id="empty-state" class="empty-state hidden">Tidak ada transaksi yang cocok.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== MODAL FORM TAMBAH/EDIT ===== -->
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">Tambah Transaksi</h3>
+        <button id="modal-close" class="btn btn-icon" aria-label="Tutup modal">✕</button>
+      </div>
+      <form id="transaction-form" novalidate>
+        <!-- Field: tipe -->
+        <div class="form-group">
+          <label>Tipe</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="type" value="income" /> Pemasukan
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="type" value="expense" checked /> Pengeluaran
+            </label>
+          </div>
+        </div>
+        <!-- Field: tanggal -->
+        <div class="form-group">
+          <label for="form-date">Tanggal</label>
+          <input type="date" id="form-date" required />
+        </div>
+        <!-- Field: kategori -->
+        <div class="form-group">
+          <label for="form-category">Kategori</label>
+          <select id="form-category" required>
+            <!-- Diisi oleh JS berdasarkan tipe -->
+          </select>
+        </div>
+        <!-- Field: jumlah -->
+        <div class="form-group">
+          <label for="form-amount">Jumlah (Rp)</label>
+          <input type="number" id="form-amount" min="1" step="1000" placeholder="Contoh: 150000" required />
+        </div>
+        <!-- Field: catatan -->
+        <div class="form-group">
+          <label for="form-note">Catatan</label>
+          <input type="text" id="form-note" maxlength="100" placeholder="Opsional…" />
+        </div>
+        <p id="form-error" class="form-error hidden"></p>
+        <div class="form-actions">
+          <button type="button" id="btn-cancel" class="btn btn-outline">Batal</button>
+          <button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DIALOG KONFIRMASI HAPUS ===== -->
+  <div id="confirm-overlay" class="modal-overlay hidden" role="alertdialog" aria-modal="true">
+    <div class="modal-box modal-box-sm">
+      <p class="confirm-msg">Hapus transaksi ini?</p>
+      <div class="form-actions">
+        <button id="btn-confirm-cancel" class="btn btn-outline">Batal</button>
+        <button id="btn-confirm-ok" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

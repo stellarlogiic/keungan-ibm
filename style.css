@@ -1,0 +1,546 @@
+/* ====================================================
+   CatatUang – Style Sheet
+   Mendukung light mode dan dark mode via data-theme
+   ==================================================== */
+
+/* ---------- CSS Custom Properties (tema) ---------- */
+:root {
+  --bg:           #f0f2f5;
+  --surface:      #ffffff;
+  --surface-alt:  #f7f8fa;
+  --border:       #e2e6ea;
+  --text:         #1a1d23;
+  --text-muted:   #6b7280;
+  --text-inv:     #ffffff;
+
+  --income:       #16a34a;
+  --income-bg:    #dcfce7;
+  --expense:      #dc2626;
+  --expense-bg:   #fee2e2;
+  --balance:      #2563eb;
+  --balance-bg:   #dbeafe;
+
+  --primary:      #2563eb;
+  --primary-hover:#1d4ed8;
+  --danger:       #dc2626;
+  --danger-hover: #b91c1c;
+
+  --radius:       10px;
+  --radius-lg:    16px;
+  --shadow:       0 1px 4px rgba(0,0,0,.08), 0 2px 12px rgba(0,0,0,.06);
+  --transition:   .18s ease;
+}
+
+/* Dark mode – variabel ditimpa */
+[data-theme="dark"] {
+  --bg:           #0f1117;
+  --surface:      #1a1d2e;
+  --surface-alt:  #242736;
+  --border:       #2e3347;
+  --text:         #e8eaf0;
+  --text-muted:   #9ca3af;
+  --text-inv:     #0f1117;
+
+  --income-bg:    #14532d;
+  --expense-bg:   #7f1d1d;
+  --balance-bg:   #1e3a8a;
+
+  --shadow:       0 1px 4px rgba(0,0,0,.3), 0 2px 12px rgba(0,0,0,.2);
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 15px; scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+}
+
+a { color: var(--primary); text-decoration: none; }
+
+/* ---------- Utility ---------- */
+.hidden        { display: none !important; }
+.text-right    { text-align: right; }
+.text-center   { text-align: center; }
+.text-income   { color: var(--income); font-weight: 600; }
+.text-expense  { color: var(--expense); font-weight: 600; }
+
+/* ---------- Navbar ---------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 1.5rem;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.logo-icon { font-size: 1.4rem; }
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* ---------- Tombol ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding: .5rem 1.1rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: .9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition), transform .1s;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(.97); }
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--primary-hover); }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover { background: var(--danger-hover); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+.btn-icon {
+  background: transparent;
+  color: var(--text);
+  padding: .4rem .6rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius);
+}
+.btn-icon:hover { background: var(--surface-alt); }
+
+.btn-sm  { padding: .35rem .8rem; font-size: .82rem; }
+.btn-block { width: 100%; }
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 1.2rem 1.4rem;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+/* ---------- Layout Container ---------- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- Pilihan Bulan ---------- */
+.month-selector-bar {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-weight: 500;
+}
+.month-selector-bar input[type="month"] {
+  padding: .4rem .8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: .9rem;
+  cursor: pointer;
+}
+.month-selector-bar input[type="month"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ---------- Dashboard Cards ---------- */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.dashboard .card { padding: 1rem 1.25rem; }
+
+.card-label {
+  font-size: .82rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .35rem;
+}
+.card-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.card-income  { border-left: 4px solid var(--income);  background: var(--income-bg); }
+.card-expense { border-left: 4px solid var(--expense); background: var(--expense-bg); }
+.card-balance { border-left: 4px solid var(--balance); background: var(--balance-bg); }
+
+.card-income  .card-value { color: var(--income);  }
+.card-expense .card-value { color: var(--expense); }
+.card-balance .card-value { color: var(--balance); }
+
+/* ---------- Chart + Action Panel ---------- */
+.chart-add-row {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1rem;
+  align-items: start;
+}
+
+.chart-wrapper .section-title { margin-bottom: .8rem; }
+
+.chart-container {
+  position: relative;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chart-container canvas { max-height: 220px; }
+
+.chart-empty-msg {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .9rem;
+  margin-top: .5rem;
+}
+
+/* Panel aksi kanan */
+.action-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Legend kategori */
+.category-legend {
+  padding: 1rem;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .3rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .85rem;
+}
+.legend-item:last-child { border-bottom: none; }
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-name { flex: 1; }
+.legend-amount { font-weight: 600; color: var(--expense); }
+
+/* ---------- Filter Bar ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: .75rem;
+  padding: 1rem 1.25rem;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  min-width: 130px;
+}
+.filter-group label {
+  font-size: .78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.filter-group select,
+.filter-group input[type="text"] {
+  padding: .42rem .75rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: .9rem;
+  transition: border-color var(--transition);
+}
+.filter-group select:focus,
+.filter-group input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.filter-search { flex: 1 1 200px; }
+
+/* ---------- Section Title ---------- */
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ---------- Tabel Transaksi ---------- */
+.transactions-section { }
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: var(--surface);
+  margin-top: .75rem;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+.transactions-table thead {
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border);
+}
+.transactions-table th {
+  padding: .7rem 1rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--text-muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+.transactions-table td {
+  padding: .7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.transactions-table tbody tr:last-child td { border-bottom: none; }
+.transactions-table tbody tr:hover {
+  background: var(--surface-alt);
+  transition: background .1s;
+}
+
+/* Badge kategori */
+.badge-category {
+  display: inline-block;
+  padding: .15rem .6rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+
+/* Aksi tombol dalam tabel */
+.btn-table {
+  padding: .25rem .55rem;
+  font-size: .78rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  margin: 0 2px;
+}
+.btn-table:hover { border-color: var(--primary); color: var(--primary); }
+.btn-table.delete:hover { border-color: var(--danger); color: var(--danger); }
+
+/* Pesan kosong */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  font-size: .95rem;
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+  animation: fadeIn .15s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-box {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 40px rgba(0,0,0,.2);
+  width: 100%;
+  max-width: 460px;
+  padding: 1.5rem;
+  animation: slideUp .18s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.modal-box-sm { max-width: 340px; text-align: center; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+.modal-header h3 { font-size: 1.05rem; }
+
+/* ---------- Form dalam modal ---------- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  margin-bottom: 1rem;
+}
+.form-group label {
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group input[type="text"],
+.form-group select {
+  padding: .5rem .85rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: .95rem;
+  transition: border-color var(--transition);
+}
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* Radio group tipe transaksi */
+.radio-group {
+  display: flex;
+  gap: 1.25rem;
+}
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .9rem;
+  font-weight: normal;
+  color: var(--text);
+  cursor: pointer;
+}
+.radio-label input { cursor: pointer; accent-color: var(--primary); }
+
+.form-error {
+  color: var(--danger);
+  font-size: .83rem;
+  margin-bottom: .5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin-top: .5rem;
+}
+
+/* Konfirmasi hapus */
+.confirm-msg {
+  font-size: .95rem;
+  margin-bottom: 1.25rem;
+  color: var(--text);
+}
+
+/* ---------- Responsif: Tablet (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+  .card-balance {
+    grid-column: 1 / -1;
+  }
+  .chart-add-row {
+    grid-template-columns: 1fr;
+  }
+  .action-panel {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .action-panel .btn-block { flex-shrink: 0; width: auto; }
+  .category-legend { flex: 1; }
+}
+
+/* ---------- Responsif: HP (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  .navbar { padding: .6rem 1rem; }
+  .logo-text { font-size: 1rem; }
+  .container { padding: 1rem .85rem 3rem; gap: 1rem; }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  .card-balance { grid-column: auto; }
+  .card-value { font-size: 1.2rem; }
+
+  .action-panel { flex-direction: column; }
+  .action-panel .btn-block { width: 100%; }
+
+  .filter-bar { gap: .6rem; }
+  .filter-group { min-width: 100px; }
+
+  .transactions-table th,
+  .transactions-table td { padding: .55rem .6rem; }
+
+  .modal-box { padding: 1.2rem; }
+}
